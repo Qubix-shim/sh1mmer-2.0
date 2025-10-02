@@ -1,5 +1,5 @@
 # Thanks to https://github.com/ading2210/badrecovery for the orginal badrecovery workflow file
-on: [push]
+on: workflow_dispatch
 
 jobs:
   build:
