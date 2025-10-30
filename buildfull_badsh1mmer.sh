@@ -1,8 +1,18 @@
 #!/bin/bash
 # simple passthrough script + downloading a 129 image
-echo "welcome to the full BadSH1mmer Builder!"
 
 board=$1
+if ! [ -z $1 ]; then
+  if [ "$board" = "eve" ]; then
+     recoveryver=126
+  else
+     recoveryver=129
+  fi
+else
+  echo "Usage: sudo bash ./buildfull_badrecovery.sh <board>"
+  exit 1
+fi
+
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
@@ -11,7 +21,7 @@ fail() {
 findimage(){ # Taken from murkmod
     echo "Attempting to find recovery image from https://github.com/MercuryWorkshop/chromeos-releases-data data..."
     local mercury_data_url="https://raw.githubusercontent.com/MercuryWorkshop/chromeos-releases-data/refs/heads/main/data.json"
-    local mercury_url=$(curl -ks "$mercury_data_url" | jq -r --arg board "$board" --arg version 129 '
+    local mercury_url=$(curl -ks "$mercury_data_url" | jq -r --arg board "$board" --arg version "$recoveryver" '
       .[$board].images
       | map(select(
           .channel == "stable-channel" and
@@ -34,13 +44,18 @@ check_deps() {
 		command -v "$dep" &>/dev/null || echo "$dep"
 	done
 }
-missing_deps=$(check_deps partx sgdisk mkfs.ext4 cryptsetup lvm numfmt tar curl git python3 protoc gzip jq)
+missing_deps=$(check_deps partx sgdisk mkfs.ext4 cryptsetup lvm numfmt tar curl wget git python3 protoc gzip jq)
 [ "$missing_deps" ] && fail "The following required commands weren't found in PATH:\n${missing_deps}"
+if ! [ -f .venv ]; then
+	python3 -m venv .venv || fail "couldn't make python venv"
+	source .venv/bin/activate
+	pip install argparse protobuf six || fail "failed to download one or more of the following python packages: argparse, protobuf, six"
+fi
 
 findimage
 
 echo "Downloading 129 recovery image"
-curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
+wget --show-progress "$FINAL_URL" -O recovery.zip || fail "Failed to download recovery image"
 
 echo "Extracting 129 recovery image"
 unzip recovery.zip || fail "Failed to unzip recovery image"
@@ -50,6 +65,8 @@ rm recovery.zip || fail "Failed to delete zipped recovery image"
 
 #more murkmod code
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin") # 2 incase the zip format changes
+mv $FILENAME $board-badbr0ker.bin
+FILENAME=$(find . -maxdepth 2 -name "*-badbr0ker.bin")
 echo "Found recovery image from archive at $FILENAME"
 
 echo "running update_downloader.sh"
@@ -60,5 +77,4 @@ sudo ./build_badrecovery.sh -i "$FILENAME" -t unverified || fail "build_badrecov
 echo "Cleaning up directory"
 rm badsh1mmer/scripts/root.gz
 rm badsh1mmer/scripts/kern.gz
-echo "No errors detected while buildng the badsh1mmer image"
 echo "File saved to $FILENAME"
