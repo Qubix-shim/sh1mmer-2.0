@@ -9,7 +9,7 @@ if ! [ -z $1 ]; then
      recoveryver=129
   fi
 else
-  echo "Usage: sudo bash ./buildfull_badrecovery.sh <board>"
+  echo "Usage: sudo bash ./buildfull_badsh1mmer.sh <board>"
   exit 1
 fi
 
