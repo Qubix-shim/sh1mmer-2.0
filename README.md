@@ -4,13 +4,13 @@
 If you need any kind of support, please join our [discord server](https://discord.gg/nrMVY29MUb) for help
 ### If you would like the script to do everything for you:
 ```bash
-git clone https://github.com/crosbreaker/badsh1mmer
+git clone https://github.com/Qubix-shim/badsh1mmer
 cd badsh1mmer
 bash buildfull_badsh1mmer.sh <board>
 ```
 ### If you would like to use a local recovery image:
 ```bash
-git clone https://github.com/crosbreaker/badsh1mmer
+git clone https://github.com/Qubix-shim/badsh1mmer
 cd badsh1mmer
 bash update_downloader.sh <board>
 sudo ./build_badrecovery.sh -i image.bin -t unverified
