@@ -5,7 +5,9 @@ If you need any kind of support, please join our [discord server](https://discor
 ### If you would like the script to do everything for you:
 ```bash
 git clone https://github.com/Qubix-shim/sh1mmer-2.0
-cd badsh1mmer
+cd sh1mmer-2.0
+sudo apt update
+sudo apt install gdisk cryptsetup lvm2 protobuf-compiler
 bash buildfull_badsh1mmer.sh <board>
 ```
 ### If you would like to use a local recovery image:
